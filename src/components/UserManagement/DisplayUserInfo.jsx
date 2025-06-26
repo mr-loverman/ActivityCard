@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { db } from "../../config/firebase-config"
 import { getDocs, collection} from "firebase/firestore"
 import EditInformation from "./EditInformation";
+import AddUserInfo from "./AddUserInfo";
 
 function DisplayUserInfo() {
 
@@ -35,6 +36,7 @@ function DisplayUserInfo() {
 
   return(
     <>
+      <AddUserInfo users={userInfos} />
       <table border="1" cellPadding="10" cellSpacing="0" >
         <thead>
           <tr>

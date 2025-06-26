@@ -12,7 +12,7 @@ function EditInformation({user, refresh, editingRowId, setEditingRowId}) {
     year_section: "",
   });
 
-    const handleEditChange = (input) => {
+  const handleEditChange = (input) => {
     const {name, value} = input.target;
     setUserEdit((prevInput) => ({
       ...prevInput,
@@ -36,18 +36,24 @@ function EditInformation({user, refresh, editingRowId, setEditingRowId}) {
         console.log("You must provide an ID")
       }
 
-      if (userEdit.id === user.id) {
+      if (!userEdit.id === user.id && !userEdit.name === user.name && !userEdit.year_section === user.year_section) {
 
-        const docRef = doc(db, "UserTest", user.id);
+        if (userEdit.id === user.id) {
 
-        try {
-          await updateDoc(docRef, userEdit);
-        } catch (err) {
-          console.error("Failed in updating the document: ", err);
+          const docRef = doc(db, "UserTest", user.id);
+
+          try {
+            await updateDoc(docRef, userEdit);
+          } catch (err) {
+            console.error("Failed in updating the document: ", err);
+          }
+          
         }
-        
+
       }
+
       setEditingRowId(null);
+
     }
     refresh();
   }
