@@ -3,11 +3,13 @@ import { db } from "../../config/firebase-config"
 import { getDocs, collection} from "firebase/firestore"
 import EditInformation from "./EditInformation";
 import AddUserInfo from "./AddUserInfo";
+import QueryUserInfo from "./QueryUserInfo";
 
 function DisplayUserInfo() {
 
   const [userInfos, setUserInfos] = useState([]);
-  const [editingRowId, setEditingRowId] = useState(null)
+  const [editingRowId, setEditingRowId] = useState(null);
+  const [queryList, setQueryList] = useState([])
 
   const fetchInformation = async () => {
     const docSnap = await getDocs(collection(db, "UserTest"));
@@ -27,16 +29,17 @@ function DisplayUserInfo() {
         }) : 'None',
       }}
     );
-    setUserInfos(userList)
+    setUserInfos(userList);
+    setQueryList(userList);
   }
 
   useEffect(() => {
-    fetchInformation()
+    fetchInformation();
   }, [])
 
   return(
     <>
-      <AddUserInfo users={userInfos} />
+      <QueryUserInfo users={userInfos} queryResult={setQueryList} />
       <table border="1" cellPadding="10" cellSpacing="0" >
         <thead>
           <tr>
@@ -49,7 +52,7 @@ function DisplayUserInfo() {
           </tr>
         </thead>
         <tbody>
-          {userInfos.slice(0,10).map(user => (
+          {queryList.slice(0,10).map(user => (
             <EditInformation 
             key={user.id} 
             user={user} 

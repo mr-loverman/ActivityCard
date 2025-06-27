@@ -19,7 +19,7 @@ function AddUserInfo({users}) {
   }
 
   const addInformation = async () => {
-    const userFound = users.find(user => userInfo.id === user.id) === null
+    const userFound = users.find(user => userInfo.id === user.id)
     if (userInfo.id === "" || userInfo.id === null) {
       console.log("You must enter an Id");
       return;
