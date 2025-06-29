@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { db } from "../../config/firebase-config"
 import { getDocs, collection} from "firebase/firestore"
-import EditInformation from "./EditInformation";
 import AddUserInfo from "./AddUserInfo";
 import QueryUserInfo from "./QueryUserInfo";
+import RowInfo from "./RowInfo";
 
 function DisplayUserInfo() {
 
   const [userInfos, setUserInfos] = useState([]);
   const [editingRowId, setEditingRowId] = useState(null);
-  const [queryList, setQueryList] = useState([])
+  const [queryList, setQueryList] = useState([]);
+  const [prevPage, setPrevPage] = useState(0);
+  let nextPage = prevPage + 10;
 
   const fetchInformation = async () => {
     const docSnap = await getDocs(collection(db, "UserTest"));
@@ -30,7 +32,6 @@ function DisplayUserInfo() {
       }}
     );
     setUserInfos(userList);
-    setQueryList(userList);
   }
 
   useEffect(() => {
@@ -39,30 +40,45 @@ function DisplayUserInfo() {
 
   return(
     <>
-      <QueryUserInfo users={userInfos} queryResult={setQueryList} />
-      <table border="1" cellPadding="10" cellSpacing="0" >
-        <thead>
-          <tr>
-            <th>Student Number</th>
-            <th>Name</th>
-            <th>Section</th>
-            <th>Email</th>
-            <th>Created At</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {queryList.slice(0,10).map(user => (
-            <EditInformation 
-            key={user.id} 
-            user={user} 
-            refresh={fetchInformation}
-            editingRowId={editingRowId}
-            setEditingRowId={setEditingRowId}
-            />
-          ))}
-        </tbody>
-      </table>
+      <div>
+         <QueryUserInfo users={userInfos} queryResult={setQueryList} />
+      </div>
+      <div>
+        <table border="1" cellPadding="10" cellSpacing="0" >
+          <thead>
+            <tr>
+              <th>Student Number</th>
+              <th>Name</th>
+              <th>Section</th>
+              <th>Email</th>
+              <th>Created At</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {queryList.slice(prevPage, nextPage).map(user => (
+              <RowInfo 
+              key={user.id} 
+              user={user} 
+              refresh={fetchInformation}
+              editingRowId={editingRowId}
+              setEditingRowId={setEditingRowId}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div>
+        {prevPage > 0 && (<button onClick={() => {
+          setPrevPage((prevPageValue) => prevPageValue - 10);
+          setEditingRowId(null);
+        }} >prev</button>)}
+        <p>{nextPage / 10}</p>
+        {nextPage < queryList.length && (<button onClick={() => {
+          setPrevPage((prevPageValue) => prevPageValue + 10)
+          setEditingRowId(null);
+        }} >next</button>)}
+      </div>
     </>
   )
 
